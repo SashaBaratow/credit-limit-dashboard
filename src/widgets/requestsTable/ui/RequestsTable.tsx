@@ -1,4 +1,6 @@
 import type {RequestsTableProps} from "../model/types.ts";
+import {maskAccount} from "../../../shared/lib/maskAccount.ts";
+import {StatusBadge} from "../../../entities/request/ui";
 
 
 export function RequestsTable({ requests }: RequestsTableProps) {
@@ -25,14 +27,16 @@ export function RequestsTable({ requests }: RequestsTableProps) {
                     {requests.map((request) => (
                         <tr key={request.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4">{request.fullName}</td>
-                            <td className="px-6 py-4 font-mono text-xs text-gray-700">{request.account}</td>
+                            <td className="px-6 py-4 font-mono text-xs text-gray-700"> {maskAccount(request.account)}</td>
                             <td className="px-6 py-4">
                                 {request.currentLimit.toLocaleString()} {request.currency}
                             </td>
                             <td className="px-6 py-4">
                                 {request.requestedLimit.toLocaleString()} {request.currency}
                             </td>
-                            <td className="px-6 py-4">{request.status}</td>
+                            <td className="px-6 py-4">
+                                <StatusBadge status={request.status} />
+                            </td>
                         </tr>
                     ))}
 
