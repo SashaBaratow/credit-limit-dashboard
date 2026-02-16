@@ -1,8 +1,14 @@
-import type {ClientRequest} from "../../../entities/request/model/types.ts";
+import type {ApplicationStatus, ClientRequest, RiskReason} from "../../../entities/request/model/types.ts";
+
+export type EditFormState = {
+    status: ApplicationStatus;
+    approvedLimit: string; // строкой, чтобы удобно вводить
+    reason: RiskReason | '';
+};
 
 export type EditRequestModalProps = {
     request: ClientRequest | null;
     isOpen: boolean;
     onClose: () => void;
-    onSave: () => void;
+    onSave: (payload: { id: string; status: ApplicationStatus; approvedLimit?: number; reason?: RiskReason }) => void;
 };

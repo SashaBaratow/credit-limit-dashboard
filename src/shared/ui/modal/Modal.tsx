@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import type {ModalProps} from "./types.ts";
 
 export function Modal({ isOpen, title, children, onClose }: ModalProps) {
+
     useEffect(() => {
         if (!isOpen) return;
 
