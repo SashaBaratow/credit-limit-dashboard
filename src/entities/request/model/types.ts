@@ -28,3 +28,10 @@ export type UpdateRequestPayload = {
     approvedLimit?: number;
     reason?: RiskReason;
 };
+
+export type RequestsState = {
+    items: ClientRequest[];
+    selectedId: string | null;
+    isLoading: boolean;
+    error: string | null;
+};
