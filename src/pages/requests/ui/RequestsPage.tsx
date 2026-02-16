@@ -5,6 +5,8 @@ import {RequestsTable} from "../../../widgets/requestsTable";
 import {Select} from "../../../shared/ui/select";
 import {Input} from "../../../shared/ui/Input";
 import {useDebouncedValue} from "../../../shared/lib/useDebouncedValue.ts";
+import {selectRequest} from "../../../entities/request/model/requestsSlice.ts";
+import {EditRequestModal} from "../../../features/editRequest/ui/EditRequestModal.tsx";
 
 type StatusFilterValue = 'All' | 'New' | 'Approved' | 'Rejected';
 
@@ -17,7 +19,7 @@ const statusOptions: { value: StatusFilterValue; label: string }[] = [
 
 export function RequestsPage() {
     const dispatch = useAppDispatch();
-    const { items, isLoading, error } = useAppSelector((state) => state.requests);
+    const { items, isLoading, error, selectedId } = useAppSelector((state) => state.requests);
 
     const [statusFilter, setStatusFilter] = useState<StatusFilterValue>('All');
     const [searchQuery, setSearchQuery] = useState('');
@@ -46,6 +48,12 @@ export function RequestsPage() {
                     .includes(debouncedSearchQuery.toLowerCase());
             });
     }, [items, statusFilter, debouncedSearchQuery]);
+
+    const selectedRequest = useMemo(() => {
+        if (!selectedId) return null;
+        return items.find((request) => request.id === selectedId) ?? null;
+    }, [items, selectedId]);
+
 
 
 
@@ -87,8 +95,19 @@ export function RequestsPage() {
                     </div>
                 </div>
 
-                {!isLoading && !error && <RequestsTable requests={filteredRequests} />}
+                {!isLoading && !error &&
+                    <RequestsTable
+                    requests={filteredRequests}
+                    onRowClick={(id) => dispatch(selectRequest(id))}
+                />}
             </div>
+
+            <EditRequestModal
+                isOpen={selectedId !== null}
+                request={selectedRequest}
+                onClose={() => dispatch(selectRequest(null))}
+                onSave={() => dispatch(selectRequest(null))}
+            />
         </div>
     );
 }

@@ -3,7 +3,7 @@ import {maskAccount} from "../../../shared/lib/maskAccount.ts";
 import {StatusBadge} from "../../../entities/request/ui";
 
 
-export function RequestsTable({ requests }: RequestsTableProps) {
+export function RequestsTable({ requests, onRowClick }: RequestsTableProps) {
     return (
         <div className="overflow-hidden rounded-xl bg-white shadow">
             <div className="border-b px-6 py-4">
@@ -25,7 +25,10 @@ export function RequestsTable({ requests }: RequestsTableProps) {
 
                     <tbody className="divide-y text-sm text-gray-800">
                     {requests.map((request) => (
-                        <tr key={request.id} className="hover:bg-gray-50">
+                        <tr
+                            key={request.id}
+                            onClick={() => onRowClick(request.id)}
+                            className="hover:bg-gray-50 cursor-pointer">
                             <td className="px-6 py-4">{request.fullName}</td>
                             <td className="px-6 py-4 font-mono text-xs text-gray-700"> {maskAccount(request.account)}</td>
                             <td className="px-6 py-4">
