@@ -2,12 +2,22 @@ import {useEffect, useMemo, useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../../app/providers";
 import {fetchRequestsThunk} from "../../../entities/request/model/thunks.ts";
 import {RequestsTable} from "../../../widgets/requestsTable";
+import {Select} from "../../../shared/ui/select";
+
+type StatusFilterValue = 'All' | 'New' | 'Approved' | 'Rejected';
+
+const statusOptions: { value: StatusFilterValue; label: string }[] = [
+    { value: 'All', label: 'Все' },
+    { value: 'New', label: 'Новые' },
+    { value: 'Approved', label: 'Одобренные' },
+    { value: 'Rejected', label: 'Отклонённые' },
+];
 
 export function RequestsPage() {
     const dispatch = useAppDispatch();
     const { items, isLoading, error } = useAppSelector((state) => state.requests);
 
-    const [statusFilter, setStatusFilter] = useState<string>('All');
+    const [statusFilter, setStatusFilter] = useState<StatusFilterValue>('All');
 
     useEffect(() => {
         dispatch(fetchRequestsThunk());
@@ -41,18 +51,15 @@ export function RequestsPage() {
                     </div>
                 )}
 
-                <div className="mb-4">
-                    <label className="mr-2 text-sm text-gray-700">Статус:</label>
-                    <select
+                <div className="mb-4 flex items-center gap-2">
+                    <span className="text-sm text-gray-700">Статус:</span>
+
+                    <Select
                         value={statusFilter}
-                        onChange={(event) => setStatusFilter(event.target.value)}
-                        className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:border-blue-500 focus:outline-none"
-                    >
-                        <option value="All">Все</option>
-                        <option value="New">Новые</option>
-                        <option value="Approved">Одобренные</option>
-                        <option value="Rejected">Отклонённые</option>
-                    </select>
+                        options={statusOptions}
+                        onChange={setStatusFilter}
+                        ariaLabel="Фильтр по статусу"
+                    />
                 </div>
 
                 {!isLoading && !error && <RequestsTable requests={filteredRequests} />}
