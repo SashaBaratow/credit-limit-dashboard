@@ -18,7 +18,7 @@ let requestsDb: ClientRequest[] = [
     },
     {
         id: '1c9d-8b34',
-        fullName: 'Константинопольский Александр Владимирович"',
+        fullName: 'Константинопольский Александр Владимирович',
         account: '40817810500000005678',
         currentLimit: 1_500_000,
         requestedLimit: 2000000,
