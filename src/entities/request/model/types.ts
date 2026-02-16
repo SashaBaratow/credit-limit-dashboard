@@ -21,3 +21,10 @@ export interface ClientRequest {
     reason?: RiskReason;
     updatedAt?: string;
 }
+
+export type UpdateRequestPayload = {
+    id: string;
+    status: ApplicationStatus;
+    approvedLimit?: number;
+    reason?: RiskReason;
+};
