@@ -9,6 +9,8 @@ export type EditFormState = {
 export type EditRequestModalProps = {
     request: ClientRequest | null;
     isOpen: boolean;
+    isSaving: boolean;
+    saveError: string | null;
     onClose: () => void;
     onSave: (payload: { id: string; status: ApplicationStatus; approvedLimit?: number; reason?: RiskReason }) => void;
 };

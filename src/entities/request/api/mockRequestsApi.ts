@@ -1,4 +1,4 @@
-import type { ClientRequest, RiskReason, ApplicationStatus } from '../model/types';
+import type { ClientRequest} from '../model/types';
 import type {UpdateRequestPayload} from "../model/types.ts";
 
 const MIN_LIMIT = 0;
@@ -51,18 +51,18 @@ function assertLimitIsValid(limit: number) {
 export function getRequests(): Promise<ClientRequest[]> {
     return new Promise((resolve) => {
         setTimeout(() => {
-            resolve(requestsDb);
+            const copy = requestsDb.map((request) => ({ ...request }));
+            resolve(copy);
         }, NETWORK_DELAY_MS);
     });
 }
 
 
+
 export function updateRequest(payload: UpdateRequestPayload): Promise<ClientRequest> {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            const requestIndex = requestsDb.findIndex(
-                (request) => request.id === payload.id
-            );
+            const requestIndex = requestsDb.findIndex((request) => request.id === payload.id);
 
             if (requestIndex === -1) {
                 reject(new Error('Request not found'));
@@ -94,6 +94,7 @@ export function updateRequest(payload: UpdateRequestPayload): Promise<ClientRequ
                 updatedAt: new Date().toISOString(),
             };
 
+            requestsDb = [...requestsDb];
             requestsDb[requestIndex] = updatedRequest;
 
             resolve(updatedRequest);

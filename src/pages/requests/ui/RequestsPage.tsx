@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../../app/providers";
-import {fetchRequestsThunk} from "../../../entities/request/model/thunks.ts";
+import {fetchRequestsThunk, updateRequestThunk} from "../../../entities/request/model/thunks.ts";
 import {RequestsTable} from "../../../widgets/requestsTable";
 import {Select} from "../../../shared/ui/select";
 import {Input} from "../../../shared/ui/Input";
@@ -24,6 +24,8 @@ export function RequestsPage() {
     const [statusFilter, setStatusFilter] = useState<StatusFilterValue>('All');
     const [searchQuery, setSearchQuery] = useState('');
     const debouncedSearchQuery = useDebouncedValue(searchQuery, 400);
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
 
 
 
@@ -98,15 +100,35 @@ export function RequestsPage() {
                 {!isLoading && !error &&
                     <RequestsTable
                     requests={filteredRequests}
-                    onRowClick={(id) => dispatch(selectRequest(id))}
+                    onRowClick={(id) => {
+                        setSaveError(null);
+                        dispatch(selectRequest(id));
+                    }}
                 />}
             </div>
 
             <EditRequestModal
                 isOpen={selectedId !== null}
                 request={selectedRequest}
-                onClose={() => dispatch(selectRequest(null))}
-                onSave={() => dispatch(selectRequest(null))}
+                isSaving={isSaving}
+                saveError={saveError}
+                onClose={() => {
+                    setSaveError(null);
+                    dispatch(selectRequest(null));
+                }}
+                onSave={async (payload) => {
+                    try {
+                        setSaveError(null);
+                        setIsSaving(true);
+                        await dispatch(updateRequestThunk(payload)).unwrap();
+                        dispatch(selectRequest(null));
+                    } catch (e) {
+                        const message = e instanceof Error ? e.message : 'Ошибка сохранения';
+                        setSaveError(message);
+                    } finally {
+                        setIsSaving(false);
+                    }
+                }}
             />
         </div>
     );

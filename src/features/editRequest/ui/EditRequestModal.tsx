@@ -1,10 +1,10 @@
 import {useEffect, useMemo, useState} from 'react';
-import type {ClientRequest, RiskReason, ApplicationStatus} from '../../../entities/request/model/types';
-import {Modal} from '../../../shared/ui/Modal';
+import type {RiskReason, ApplicationStatus} from '../../../entities/request/model/types';
 import {Input} from '../../../shared/ui/Input';
-import {Select} from '../../../shared/ui/Select';
 import {parseNumber} from '../../../shared/lib/parseNumber';
 import type {EditFormState, EditRequestModalProps} from "../model/types.ts";
+import {Select} from "../../../shared/ui/select";
+import {Modal} from "../../../shared/ui/modal";
 
 const MIN_LIMIT = 0;
 const MAX_LIMIT = 10_000_000;
@@ -17,7 +17,8 @@ const baseReasons: Array<{ value: RiskReason; label: string }> = [
     {value: 'Несоответствие данных', label: 'Несоответствие данных'},
 ];
 
-export function EditRequestModal({request, isOpen, onClose, onSave}: EditRequestModalProps) {
+export function EditRequestModal({ request, isOpen, isSaving, saveError, onClose, onSave }: EditRequestModalProps) {
+
 
     const [form, setForm] = useState<EditFormState>({
         status: 'New',
@@ -181,6 +182,12 @@ export function EditRequestModal({request, isOpen, onClose, onSave}: EditRequest
                         </div>
                     )}
 
+                    {saveError && (
+                        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                            {saveError}
+                        </div>
+                    )}
+
                     <div className="flex justify-end gap-2 pt-2">
                         <button
                             type="button"
@@ -193,9 +200,13 @@ export function EditRequestModal({request, isOpen, onClose, onSave}: EditRequest
                         <button
                             type="button"
                             onClick={handleSave}
-                            className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+                            disabled={isSaving}
+                            className={[
+                                'rounded-md px-4 py-2 text-sm text-white',
+                                isSaving ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                            ].join(' ')}
                         >
-                            Сохранить
+                            {isSaving ? 'Сохранение...' : 'Сохранить'}
                         </button>
                     </div>
                 </div>
