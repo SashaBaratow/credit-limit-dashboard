@@ -3,6 +3,8 @@ import {useAppDispatch, useAppSelector} from "../../../app/providers";
 import {fetchRequestsThunk} from "../../../entities/request/model/thunks.ts";
 import {RequestsTable} from "../../../widgets/requestsTable";
 import {Select} from "../../../shared/ui/select";
+import {Input} from "../../../shared/ui/Input";
+import {useDebouncedValue} from "../../../shared/lib/useDebouncedValue.ts";
 
 type StatusFilterValue = 'All' | 'New' | 'Approved' | 'Rejected';
 
@@ -18,6 +20,10 @@ export function RequestsPage() {
     const { items, isLoading, error } = useAppSelector((state) => state.requests);
 
     const [statusFilter, setStatusFilter] = useState<StatusFilterValue>('All');
+    const [searchQuery, setSearchQuery] = useState('');
+    const debouncedSearchQuery = useDebouncedValue(searchQuery, 400);
+
+
 
     useEffect(() => {
         dispatch(fetchRequestsThunk());
@@ -25,10 +31,22 @@ export function RequestsPage() {
 
 
     const filteredRequests = useMemo(() => {
-        if (statusFilter === 'All') return items;
+        return items
+            .filter((request) => {
+                if (statusFilter !== 'All' && request.status !== statusFilter) {
+                    return false;
+                }
 
-        return items.filter((request) => request.status === statusFilter);
-    }, [items, statusFilter]);
+                if (!debouncedSearchQuery.trim()) {
+                    return true;
+                }
+
+                return request.fullName
+                    .toLowerCase()
+                    .includes(debouncedSearchQuery.toLowerCase());
+            });
+    }, [items, statusFilter, debouncedSearchQuery]);
+
 
 
     return (
@@ -60,6 +78,13 @@ export function RequestsPage() {
                         onChange={setStatusFilter}
                         ariaLabel="Фильтр по статусу"
                     />
+                    <div>
+                        <Input
+                            placeholder="Поиск по ФИО"
+                            value={searchQuery}
+                            onChange={(event) => setSearchQuery(event.target.value)}
+                        />
+                    </div>
                 </div>
 
                 {!isLoading && !error && <RequestsTable requests={filteredRequests} />}
