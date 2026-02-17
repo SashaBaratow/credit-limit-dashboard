@@ -5,6 +5,7 @@ import {parseNumber} from '../../../shared/lib/parseNumber';
 import type {EditFormState, EditRequestModalProps} from "../model/types.ts";
 import {Select} from "../../../shared/ui/select";
 import {Modal} from "../../../shared/ui/modal";
+import {maskAccount} from "../../../shared/lib/maskAccount.ts";
 
 const MIN_LIMIT = 0;
 const MAX_LIMIT = 10_000_000;
@@ -110,9 +111,15 @@ export function EditRequestModal({ request, isOpen, isSaving, saveError, onClose
                 <div className="text-sm text-gray-600">Заявка не выбрана</div>
             ) : (
                 <div className="space-y-4 text-sm">
-                    <div>
-                        <div className="text-gray-500">Клиент</div>
-                        <div className="font-medium text-gray-900">{request.fullName}</div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <div className="text-gray-500">Клиент</div>
+                            <div className="font-medium text-gray-900">{request.fullName}</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-500">Счет</div>
+                            <div className="font-medium text-gray-900">{maskAccount(request.account)}</div>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -147,7 +154,7 @@ export function EditRequestModal({ request, isOpen, isSaving, saveError, onClose
                         </div>
 
                         <Input
-                            label="Одобренный лимит"
+                            label="Новый лимит"
                             placeholder="Напр. 1500000"
                             value={form.approvedLimit}
                             onChange={(event) => setForm((prev) => ({...prev, approvedLimit: event.target.value}))}

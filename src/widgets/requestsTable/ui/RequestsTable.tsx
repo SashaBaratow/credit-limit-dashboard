@@ -1,5 +1,4 @@
 import type {RequestsTableProps} from "../model/types.ts";
-import {maskAccount} from "../../../shared/lib/maskAccount.ts";
 import {StatusBadge} from "../../../entities/request/ui";
 
 
@@ -15,8 +14,8 @@ export function RequestsTable({ requests, onRowClick }: RequestsTableProps) {
                 <table className="w-full table-auto">
                     <thead className="bg-gray-50 text-left text-sm text-gray-600">
                     <tr>
+                        <th className="px-6 py-3 font-medium">ID</th>
                         <th className="px-6 py-3 font-medium">ФИО</th>
-                        <th className="px-6 py-3 font-medium">Счёт</th>
                         <th className="px-6 py-3 font-medium">Текущий лимит</th>
                         <th className="px-6 py-3 font-medium">Запрошенный лимит</th>
                         <th className="px-6 py-3 font-medium">Статус</th>
@@ -29,8 +28,8 @@ export function RequestsTable({ requests, onRowClick }: RequestsTableProps) {
                             key={request.id}
                             onClick={() => onRowClick(request.id)}
                             className="hover:bg-gray-50 cursor-pointer">
+                            <td className="px-6 py-4">{request.id}</td>
                             <td className="px-6 py-4">{request.fullName}</td>
-                            <td className="px-6 py-4 font-mono text-xs text-gray-700"> {maskAccount(request.account)}</td>
                             <td className="px-6 py-4">
                                 {request.currentLimit.toLocaleString()} {request.currency}
                             </td>
