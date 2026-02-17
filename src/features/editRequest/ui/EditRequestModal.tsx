@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useMemo, useState} from 'react';
 import type {RiskReason, ApplicationStatus} from '../../../entities/request/model/types';
 import {Input} from '../../../shared/ui/Input';
 import {parseNumber} from '../../../shared/lib/parseNumber';
@@ -6,6 +6,7 @@ import type {EditFormState, EditRequestModalProps} from "../model/types.ts";
 import {Select} from "../../../shared/ui/select";
 import {Modal} from "../../../shared/ui/modal";
 import {maskAccount} from "../../../shared/lib/maskAccount.ts";
+import {Button} from "../../../shared/ui/button";
 
 const MIN_LIMIT = 0;
 const MAX_LIMIT = 10_000_000;
@@ -21,25 +22,20 @@ const baseReasons: Array<{ value: RiskReason; label: string }> = [
 export function EditRequestModal({ request, isOpen, isSaving, saveError, onClose, onSave }: EditRequestModalProps) {
 
 
-    const [form, setForm] = useState<EditFormState>({
-        status: 'New',
-        approvedLimit: '',
-        reason: '',
+    const [form, setForm] = useState<EditFormState>(() => {
+        if (!request) {
+            return { status: 'New', approvedLimit: '', reason: '' };
+        }
+
+        return {
+            status: request.status,
+            approvedLimit: request.approvedLimit !== undefined ? String(request.approvedLimit) : '',
+            reason: request.reason ?? '',
+        };
     });
 
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (!request) return;
-
-        setForm({
-            status: request.status,
-            approvedLimit: request.approvedLimit !== undefined ? String(request.approvedLimit) : '',
-            reason: request.reason ?? '',
-        });
-
-        setError(null);
-    }, [request]);
 
     const approvedLimitNumber = useMemo(() => parseNumber(form.approvedLimit), [form.approvedLimit]);
 
@@ -58,13 +54,11 @@ export function EditRequestModal({ request, isOpen, isSaving, saveError, onClose
     function validate(): boolean {
         setError(null);
 
-        // статус всегда есть
         if (!form.status) {
             setError('Укажите статус');
             return false;
         }
 
-        // approvedLimit может быть пустым (например, для New), но если заполнен — валидируем
         if (form.approvedLimit.trim()) {
             if (approvedLimitNumber === null) {
                 setError('Лимит должен быть числом');
@@ -105,8 +99,15 @@ export function EditRequestModal({ request, isOpen, isSaving, saveError, onClose
         onSave(payload);
     }
 
+    function handleClose() {
+        if (isSaving) return;
+        setError(null);
+        onClose();
+    }
+
+
     return (
-        <Modal isOpen={isOpen} title="Редактирование заявки" onClose={onClose}>
+        <Modal isOpen={isOpen} title="Редактирование заявки" onClose={handleClose}>
             {!request ? (
                 <div className="text-sm text-gray-600">Заявка не выбрана</div>
             ) : (
@@ -196,25 +197,22 @@ export function EditRequestModal({ request, isOpen, isSaving, saveError, onClose
                     )}
 
                     <div className="flex justify-end gap-2 pt-2">
-                        <button
+                        <Button
                             type="button"
-                            onClick={onClose}
-                            className="rounded-md border px-4 py-2 text-sm hover:bg-gray-50"
+                            variant="secondary"
+                            onClick={handleClose}
                         >
                             Отмена
-                        </button>
+                        </Button>
 
-                        <button
+                        <Button
                             type="button"
+                            variant="primary"
+                            isLoading={isSaving}
                             onClick={handleSave}
-                            disabled={isSaving}
-                            className={[
-                                'rounded-md px-4 py-2 text-sm text-white',
-                                isSaving ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                            ].join(' ')}
                         >
-                            {isSaving ? 'Сохранение...' : 'Сохранить'}
-                        </button>
+                            Сохранить
+                        </Button>
                     </div>
                 </div>
             )}

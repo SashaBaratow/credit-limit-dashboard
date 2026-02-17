@@ -112,6 +112,7 @@ export function RequestsPage() {
                     </div>
 
                     <EditRequestModal
+                        key={selectedRequest?.id ?? 'empty'}
                         isOpen={selectedId !== null}
                         request={selectedRequest}
                         isSaving={isSaving}
