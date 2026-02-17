@@ -33,7 +33,7 @@ let requestsDb: ClientRequest[] = [
         fullName: 'Сидорова Анна Сергеевна',
         account: '40817840300000009999',
         currentLimit: 100_000,
-        requestedLimit: 0,
+        requestedLimit: 110_000,
         currency: 'KGS',
         status: 'Rejected',
         reason: 'Недостаточно документов',

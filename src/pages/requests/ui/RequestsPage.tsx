@@ -7,7 +7,7 @@ import {Input} from "../../../shared/ui/Input";
 import {useDebouncedValue} from "../../../shared/lib/useDebouncedValue.ts";
 import {selectRequest} from "../../../entities/request/model/requestsSlice.ts";
 import {EditRequestModal} from "../../../features/editRequest/ui/EditRequestModal.tsx";
-import {SessionLogPanel} from "../../../widgets/sessionLog/ui/SessionLogPanel.tsx";
+import {SessionLogPanel} from "../../../widgets/sessionLog";
 import {buildChangeLogMessage} from "../../../features/editRequest/lib/buildChangeLogMessage.ts";
 import {addLog} from "../../../entities/sessionLog/model/sessionLogSlice.ts";
 
@@ -64,7 +64,7 @@ export function RequestsPage() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
-                <div className="min-h-screen bg-gray-100">
+                <div className=" bg-gray-100">
                     <div className="mx-auto max-w-6xl p-6">
                         <header className="mb-6">
                             <h1 className="text-2xl font-bold text-gray-900">Заявки на изменение лимита</h1>
@@ -83,7 +83,7 @@ export function RequestsPage() {
                             </div>
                         )}
 
-                        <div className="mb-4 flex items-center gap-2">
+                        <div className="mb-4 flex items-center gap-2 flex-wrap">
                             <span className="text-sm text-gray-700">Статус:</span>
 
                             <Select

@@ -2,7 +2,7 @@ import type {ApplicationStatus, ClientRequest, RiskReason} from "../../../entiti
 
 export type EditFormState = {
     status: ApplicationStatus;
-    approvedLimit: string; // строкой, чтобы удобно вводить
+    approvedLimit: string;
     reason: RiskReason | '';
 };
 
